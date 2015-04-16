@@ -17,7 +17,7 @@ module Ronsen
       if res.status != 200
         raise
       end
-      res
+      res.body
     end
 
     def get_bin(url)
