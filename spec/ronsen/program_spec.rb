@@ -1,21 +1,20 @@
 require 'spec_helper'
 
 describe Ronsen::Program do
-  describe "class methods" do
-    it "can parse all programs" do
-      xml_path = Pathname.new(__dir__) + "../fixtures/programs.xml"
-      xml = xml_path.read
-
-      programs = Ronsen::Program.parse_entire_xml(xml)
-
-      expect(programs.count).to eq 81
+  describe ".parse_entire_xml" do
+    subject { -> { Ronsen::Program.parse_entire_xml(xml) } }
+    context "load programs.xml" do
+      let(:xml) {
+        xml_path = Pathname.new(__dir__) + "../fixtures/programs.xml"
+        xml_path.read
+      }
+      let(:programs_count) { 81 }
+      it { expect(subject.call.count).to eq programs_count }
     end
 
-    it "raise exception if no programs" do
-      xml = '<?xml version="1.0" encoding="UTF-8"?>'
-      expect {
-        Ronsen::Program.parse_entire_xml(xml)
-      }.to raise_error
+    context "no programs in xml" do
+      let(:xml) { '<?xml version="1.0" encoding="UTF-8"?>' }
+      it { is_expected.to raise_error }
     end
 
   end
