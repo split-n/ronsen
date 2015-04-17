@@ -22,9 +22,9 @@ describe Ronsen::Program do
   end
 
   describe "Instance" do
-    shared_context "correct fixture xml" do
+    shared_context "program1.xml" do
       let(:xml) {
-        xml_path = Pathname.new(__dir__) + "../fixtures/correct_program.xml"
+        xml_path = Pathname.new(__dir__) + "../fixtures/program1.xml"
         Nokogiri.parse(xml_path.read).xpath("//program").first
       }
     end
@@ -52,21 +52,20 @@ describe Ronsen::Program do
         }
         it { is_expected.to raise_error }
       end
-      context "load correct fixture xml" do
-        include_context "correct fixture xml"
+      context "load program1.xml" do
+        include_context "program1.xml"
         it { expect(subject.call).to be_a Ronsen::Program }
       end
     end
 
-    context "initialized by correct fixture xml" do
-      include_context "correct fixture xml"
+    context "initialized by program1.xml" do
+      include_context "program1.xml"
       let(:instance) { Ronsen::Program.new(xml) }
       describe "#id" do
         subject { instance.id }
           let(:correct_id) { "shirobako" }
           it { is_expected.to eq correct_id }
       end
-
     end
   end
 end
