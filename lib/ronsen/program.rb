@@ -9,6 +9,8 @@ module Ronsen
     end
 
     def initialize(prog_xml)
+      raise unless prog_xml.is_a? Nokogiri::XML::Node
+      raise if prog_xml.name != "program"
       @xml = prog_xml
     end
 
