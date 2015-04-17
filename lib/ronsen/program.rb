@@ -3,7 +3,8 @@ module Ronsen
     class << self
       def parse_entire_xml(xml_str)
         doc = Nokogiri.parse(xml_str)
-        doc.css("program").map{|p| self.new(p)}
+        progs = doc.css("program").map{|p| self.new(p)}
+        progs.empty? ? raise : progs
       end
     end
 
