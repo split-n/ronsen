@@ -43,5 +43,13 @@ describe Ronsen::Program do
       it { is_expected.to raise_error }
     end
 
+    context "load fixture xml" do
+      let(:xml) {
+        xml_path = Pathname.new(__dir__) + "../fixtures/correct_program.xml"
+        Nokogiri.parse(xml_path.read).xpath("//program").first
+      }
+      it { expect(subject.call).to be_a Ronsen::Program }
+    end
+
   end
 end

@@ -9,8 +9,8 @@ module Ronsen
     end
 
     def initialize(prog_xml)
-      raise unless prog_xml.is_a? Nokogiri::XML::Node
-      raise if prog_xml.name != "program"
+      raise "type is not Nokogiri::XML::Node" unless prog_xml.is_a? Nokogiri::XML::Node
+      raise "root node is not program" if prog_xml.name != "program"
       @xml = prog_xml
     end
 
