@@ -1,9 +1,9 @@
 module Ronsen
   class Accessor
-    ONSEN_HOST = "http://onsen.ag"
+    include Singleton
+    ONSEN_HOST = "http://www.onsen.ag"
 
     def initialize
-      @conns = {}
     end
 
     def get_programs_xml

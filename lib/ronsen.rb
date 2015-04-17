@@ -1,5 +1,6 @@
 require 'nokogiri'
 require 'faraday'
+require 'singleton'
 
 require "ronsen/version"
 require "ronsen/accessor"
