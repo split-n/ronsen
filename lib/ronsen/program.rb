@@ -20,6 +20,7 @@ module Ronsen
     end
 
     def as_hash
+      Hash.from_xml(@xml.css("program").to_s)
     end
 
     def download
