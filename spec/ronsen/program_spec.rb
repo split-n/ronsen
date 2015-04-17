@@ -56,7 +56,16 @@ describe Ronsen::Program do
         include_context "correct fixture xml"
         it { expect(subject.call).to be_a Ronsen::Program }
       end
+    end
 
+    context "initialized by correct fixture xml" do
+      include_context "correct fixture xml"
+      let(:instance) { Ronsen::Program.new(xml) }
+      describe "#id" do
+        subject { instance.id }
+          let(:correct_id) { "shirobako" }
+          it { is_expected.to eq correct_id }
+      end
 
     end
   end
