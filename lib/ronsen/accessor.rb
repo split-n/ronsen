@@ -26,7 +26,5 @@ module Ronsen
       end
       file
     end
-
-
   end
 end
