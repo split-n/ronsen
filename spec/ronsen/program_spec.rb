@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Ronsen::Program do
   describe "class methods" do
     it "can parse all programs" do
-      xml_path = Pathname.new(__dir__) + "../assets/programs.xml"
+      xml_path = Pathname.new(__dir__) + "../fixtures/programs.xml"
       xml = xml_path.read
 
       programs = Ronsen::Program.parse_entire_xml(xml)
