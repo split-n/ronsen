@@ -15,7 +15,7 @@ module Ronsen
     end
 
     def id
-      @xml.attr("id").text
+      @xml.attr("id")
     end
 
     def original_xml
