@@ -20,8 +20,13 @@ module Ronsen
     end
 
     def get_bin(url)
-
+      file = open(url)
+      if file.status.first != "200"
+        raise
+      end
+      file
     end
+
 
   end
 end
