@@ -87,7 +87,11 @@ describe Ronsen::Program do
               xml.css("personalities>personality>name").map{|p| p.text}
             )
         end
+      end
 
+      describe "#banner_image_url" do
+        subject { instance.banner_image_url }
+        it { is_expected.to eq "http://www.onsen.ag/program/shirobako/image/176_pgi01_s.jpg" }
 
       end
     end

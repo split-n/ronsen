@@ -27,10 +27,14 @@ module Ronsen
       h["program"]
     end
 
+    def banner_image_url
+      (URI.parse("http://www.onsen.ag/") +
+       @xml.css("banner_image").first.text).to_s
+    end
+
     def download
       target = @xml.css("program > movie_url").first.text
       Accessor.instance.get_bin(target)
     end
-
   end
 end
