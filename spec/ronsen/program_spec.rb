@@ -61,10 +61,26 @@ describe Ronsen::Program do
     context "initialized by program1.xml" do
       include_context "program1.xml"
       let(:instance) { Ronsen::Program.new(xml) }
+
       describe "#id" do
         subject { instance.id }
-          let(:correct_id) { "shirobako" }
-          it { is_expected.to eq correct_id }
+        let(:correct_id) { "shirobako" }
+        it { is_expected.to eq correct_id }
+      end
+
+      describe "#original_xml" do
+        subject { instance.original_xml }
+        it { is_expected.to include '<program id="shirobako">' }
+      end
+
+      describe "#as_hash" do
+        %w(title copyright is_app movie_url up_date).each do |tagname|
+          it "should eq #{tagname}" do
+            expect(instance.as_hash[tagname]).to eq xml.xpath("//#{tagname}").first.text
+          end
+        end
+
+
       end
     end
   end
