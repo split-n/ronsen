@@ -36,5 +36,10 @@ module Ronsen
       target = @xml.css("program > movie_url").first.text
       Accessor.instance.get_bin(target)
     end
+
+    private
+    def write_mp3_tag(mp3_file)
+
+    end
   end
 end
