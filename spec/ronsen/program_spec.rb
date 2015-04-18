@@ -80,6 +80,14 @@ describe Ronsen::Program do
           end
         end
 
+          it "should eq personalities" do
+            expect(
+              instance.as_hash["personalities"]["personality"].map{|p| p["name"]}
+            ).to eq(
+              xml.css("personalities>personality>name").map{|p| p.text}
+            )
+        end
+
 
       end
     end
