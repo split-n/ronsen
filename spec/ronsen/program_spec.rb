@@ -92,7 +92,11 @@ describe Ronsen::Program do
       describe "#banner_image_url" do
         subject { instance.banner_image_url }
         it { is_expected.to eq "http://www.onsen.ag/program/shirobako/image/176_pgi01_s.jpg" }
+      end
 
+      describe "#pretty_filename" do
+        subject { instance.pretty_filename }
+        it { is_expected.to eq "SHIROBAKOラジオBOX 第26回 4月6日放送.mp3" }
       end
     end
   end

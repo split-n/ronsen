@@ -37,6 +37,13 @@ module Ronsen
       Accessor.instance.get_bin(target)
     end
 
+    def pretty_filename
+      h = as_hash
+      date = Date.parse h["up_date"]
+      ext = File.extname h["movie_url"]
+      "#{h["title"]} 第#{h["program_number"].rjust(2,"0")}回 #{date.month}月#{date.day}日放送#{ext}"
+    end
+
     private
     def write_mp3_tag(mp3_file)
 
