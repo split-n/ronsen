@@ -1,4 +1,5 @@
 [![travis](https://travis-ci.org/split-n/ronsen.svg?branch=dev)](https://travis-ci.org/split-n/ronsen)
+[![Dependency Status](https://gemnasium.com/split-n/ronsen.svg)](https://gemnasium.com/split-n/ronsen)
 # Ronsen
 
 onsen.ag gem (currently using android app's api)
