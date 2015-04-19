@@ -4,6 +4,7 @@ describe Ronsen::Program do
   describe "Class" do
     describe ".parse_entire_xml" do
       subject { -> { Ronsen::Program.parse_entire_xml(xml) } }
+
       context "load programs.xml" do
         let(:xml) {
           xml_path = Pathname.new(__dir__) + "../fixtures/programs.xml"
@@ -17,21 +18,15 @@ describe Ronsen::Program do
         let(:xml) { '<?xml version="1.0" encoding="UTF-8"?>' }
         it { is_expected.to raise_error }
       end
-
     end
-  end
 
-  describe "Instance" do
-    shared_context "program1.xml" do
+    describe "new" do
       let(:xml) {
         xml_path = Pathname.new(__dir__) + "../fixtures/program1.xml"
         Nokogiri.parse(xml_path.read).xpath("//program").first
       }
-    end
-
-
-    describe "#initialize" do
       subject { -> { Ronsen::Program.new(xml) } }
+
       context "arg is nil" do
         let(:xml) { nil }
         it { is_expected.to raise_error }
@@ -54,24 +49,26 @@ describe Ronsen::Program do
         it { is_expected.to raise_error }
       end
       context "load program1.xml" do
-        include_context "program1.xml"
         it { expect(subject.call).to be_a Ronsen::Program }
       end
     end
+  end
 
-    context "initialized by program1.xml" do
-      include_context "program1.xml"
+
+  describe "Instance" do
+    let(:instance) { Ronsen::Program.new(xml) }
+
+    shared_examples_for "Instance methods" do
       let(:instance) { Ronsen::Program.new(xml) }
 
       describe "#id" do
         subject { instance.id }
-        let(:correct_id) { "shirobako" }
-        it { is_expected.to eq correct_id }
+        it { is_expected.to eq expected_id }
       end
 
       describe "#original_xml" do
         subject { instance.original_xml }
-        it { is_expected.to include '<program id="shirobako">' }
+        it { is_expected.to include expected_original_xml_includes }
       end
 
       describe "#as_hash" do
@@ -92,18 +89,33 @@ describe Ronsen::Program do
 
       describe "#banner_image_url" do
         subject { instance.banner_image_url }
-        it { is_expected.to eq "http://www.onsen.ag/program/shirobako/image/176_pgi01_s.jpg" }
+        it { is_expected.to eq expected_banner_image_url }
       end
 
       describe "#pretty_filename" do
         subject { instance.pretty_filename }
-        it { is_expected.to eq "SHIROBAKOラジオBOX 第26回 4月6日放送.mp3" }
+        it { is_expected.to eq expected_pretty_filename }
       end
 
       describe "#can_download?" do
         subject { instance.can_download? }
-        it { is_expected.to eq true }
+        it { is_expected.to eq expected_can_download }
       end
+    end
+
+    context "initialized by program1.xml" do
+      let(:xml) {
+        xml_path = Pathname.new(__dir__) + "../fixtures/program1.xml"
+        Nokogiri.parse(xml_path.read).xpath("//program").first
+      }
+
+      let(:expected_id) { "shirobako" }
+      let(:expected_original_xml_includes) { '<program id="shirobako">' }
+      let(:expected_banner_image_url) { "http://www.onsen.ag/program/shirobako/image/176_pgi01_s.jpg" }
+      let(:expected_pretty_filename) { "SHIROBAKOラジオBOX 第26回 4月6日放送.mp3" }
+      let(:expected_can_download) { true }
+
+      it_should_behave_like "Instance methods"
     end
 
     context "initialized by cannot_download_program1.xml" do
@@ -111,12 +123,16 @@ describe Ronsen::Program do
         xml_path = Pathname.new(__dir__) + "../fixtures/cannot_download_program1.xml"
         Nokogiri.parse(xml_path.read).xpath("//program").first
       }
-      let(:instance) { Ronsen::Program.new(xml) }
 
-      describe "#can_download?" do
-        subject { instance.can_download? }
-        it { is_expected.to eq false }
-      end
+      let(:expected_id) { "noitamina" }
+      let(:expected_original_xml_includes) { '<program id="noitamina">' }
+      let(:expected_banner_image_url) { "http://www.onsen.ag/program/noitamina/image/15_pgi02_s.jpg" }
+      let(:expected_pretty_filename) { "SHIROBAKOラジオBOX 第26回 4月6日放送.mp3" }
+      let(:expected_can_download) { false }
+
+
+      it_should_behave_like "Instance methods"
     end
+
   end
 end
