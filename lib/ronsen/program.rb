@@ -24,10 +24,25 @@ module Ronsen
 
     def as_hash
       h = Hash.from_xml(@xml.to_s)["program"]
+      h = map_nil_to_empty_string(h)
       if h["personalities"]["personality"].is_a? Hash
         h["personalities"]["personality"] = [h["personalities"]["personality"]]
       end
       h
+    end
+
+    def map_nil_to_empty_string(hash)
+      hash.map{|k,v|
+        [k, (case v
+        when nil
+          ""
+        when Hash
+          map_nil_to_empty_string(v)
+        else
+          v
+        end)
+        ]
+      }.to_h
     end
 
     def banner_image_url
@@ -46,6 +61,7 @@ module Ronsen
     end
 
     def pretty_filename
+      raise if !can_download?
       h = as_hash
       date = Date.parse h["up_date"]
       ext = File.extname h["movie_url"]
