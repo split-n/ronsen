@@ -32,7 +32,12 @@ module Ronsen
        @xml.css("banner_image").first.text).to_s
     end
 
+    def can_download?
+      !@xml.css("movie_url").first.text.empty?
+    end
+
     def download
+      raise if !can_download?
       target = @xml.css("program > movie_url").first.text
       Accessor.instance.get_bin(target)
     end

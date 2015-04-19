@@ -29,6 +29,7 @@ describe Ronsen::Program do
       }
     end
 
+
     describe "#initialize" do
       subject { -> { Ronsen::Program.new(xml) } }
       context "arg is nil" do
@@ -97,6 +98,24 @@ describe Ronsen::Program do
       describe "#pretty_filename" do
         subject { instance.pretty_filename }
         it { is_expected.to eq "SHIROBAKOラジオBOX 第26回 4月6日放送.mp3" }
+      end
+
+      describe "#can_download?" do
+        subject { instance.can_download? }
+        it { is_expected.to eq true }
+      end
+    end
+
+    context "initialized by cannot_download_program1.xml" do
+      let(:xml) {
+        xml_path = Pathname.new(__dir__) + "../fixtures/cannot_download_program1.xml"
+        Nokogiri.parse(xml_path.read).xpath("//program").first
+      }
+      let(:instance) { Ronsen::Program.new(xml) }
+
+      describe "#can_download?" do
+        subject { instance.can_download? }
+        it { is_expected.to eq false }
       end
     end
   end
