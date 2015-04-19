@@ -58,8 +58,7 @@ describe Ronsen::Program do
   describe "Instance" do
     let(:instance) { Ronsen::Program.new(xml) }
 
-    shared_examples_for "Instance methods" do
-      let(:instance) { Ronsen::Program.new(xml) }
+    shared_examples_for "Instance's methods" do
 
       describe "#id" do
         subject { instance.id }
@@ -92,14 +91,17 @@ describe Ronsen::Program do
         it { is_expected.to eq expected_banner_image_url }
       end
 
-      describe "#pretty_filename" do
-        subject { instance.pretty_filename }
-        it { is_expected.to eq expected_pretty_filename }
-      end
 
       describe "#can_download?" do
         subject { instance.can_download? }
         it { is_expected.to eq expected_can_download }
+      end
+    end
+
+    shared_examples_for "Normal Instance's methods" do
+      describe "#pretty_filename" do
+        subject { instance.pretty_filename }
+        it { is_expected.to eq expected_pretty_filename }
       end
     end
 
@@ -115,7 +117,8 @@ describe Ronsen::Program do
       let(:expected_pretty_filename) { "SHIROBAKOラジオBOX 第26回 4月6日放送.mp3" }
       let(:expected_can_download) { true }
 
-      it_should_behave_like "Instance methods"
+      it_should_behave_like "Instance's methods"
+      it_should_behave_like "Normal Instance's methods"
     end
 
     context "initialized by cannot_download_program1.xml" do
@@ -127,11 +130,14 @@ describe Ronsen::Program do
       let(:expected_id) { "noitamina" }
       let(:expected_original_xml_includes) { '<program id="noitamina">' }
       let(:expected_banner_image_url) { "http://www.onsen.ag/program/noitamina/image/15_pgi02_s.jpg" }
-      let(:expected_pretty_filename) { "SHIROBAKOラジオBOX 第26回 4月6日放送.mp3" }
       let(:expected_can_download) { false }
 
+      describe "#pretty_filename" do
+        subject { -> { instance.pretty_filename } }
+        it { expect(subject).to raise_error }
+      end
 
-      it_should_behave_like "Instance methods"
+      it_should_behave_like "Instance's methods"
     end
 
   end
