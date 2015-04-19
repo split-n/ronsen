@@ -23,8 +23,11 @@ module Ronsen
     end
 
     def as_hash
-      h = Hash.from_xml(@xml.to_s)
-      h["program"]
+      h = Hash.from_xml(@xml.to_s)["program"]
+      if h["personalities"]["personality"].is_a? Hash
+        h["personalities"]["personality"] = [h["personalities"]["personality"]]
+      end
+      h
     end
 
     def banner_image_url
