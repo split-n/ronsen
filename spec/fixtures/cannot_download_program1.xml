@@ -1,0 +1,33 @@
+  <program id="noitamina">
+    <title>ノイタミナラジオ</title>
+    <copyright><![CDATA[&copy;2015 丸戸史明・深崎暮人・KADOKAWA 富士見書房／冴えない製作委員会]]></copyright>
+    <is_app>1</is_app>
+    <wday>5</wday>
+    <is_list>1</is_list>
+    <is_new>0</is_new>
+    <movie_url></movie_url>
+    <sound_video>1</sound_video>
+    <banner_image>/program/noitamina/image/15_pgi02_s.jpg</banner_image>
+    <iphone_url></iphone_url>
+    <android_url></android_url>
+    <recommend_program_id>saekano</recommend_program_id>
+    <recommends/>
+    <program_tag>ノイタミナ</program_tag>
+    <actor_tag>吉田尚記</actor_tag>
+    <category>
+      <new>0</new>
+      <radio>1</radio>
+      <movie>0</movie>
+      <niconama>0</niconama>
+      <live>0</live>
+    </category>
+    <is_nicodou>0</is_nicodou>
+    <is_outmovie>0</is_outmovie>
+    <program_number>181</program_number>
+    <up_date>2015-04-03 00:00:00</up_date>
+    <personalities>
+      <personality>
+        <name>吉田尚記</name>
+      </personality>
+    </personalities>
+  </program>
