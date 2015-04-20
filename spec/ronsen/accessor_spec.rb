@@ -74,6 +74,7 @@ describe Ronsen::Accessor do
       let(:mp3_file) { (Pathname.new(__dir__) + "../fixtures/sample.mp3").open }
 
       context "Success" do
+        subject { accessor.get_bin(url) }
         it "sends request with defined UserAgent" do
           ua = "Mozilla/////////xxxxxy[]"
 
@@ -81,11 +82,19 @@ describe Ronsen::Accessor do
 
           stub = stub_request(:get, url)
             .with(:headers => { 'User-Agent' => ua })
-            .to_return(status: 200, body: mp3_file)
+            .to_return(status: 200, body: "")
 
-          accessor.get_bin(url)
+          subject
 
           expect(stub).to have_been_requested
+        end
+
+        it "fetches correct file" do
+          stub_request(:get, url)
+            .to_return(status: 200, body: mp3_file)
+
+          expect(subject).to eq mp3_file
+
         end
       end
     end
