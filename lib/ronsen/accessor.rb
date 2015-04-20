@@ -30,11 +30,20 @@ module Ronsen
     end
 
     def get_bin(url)
-      file = open(url, "User-Agent" => @user_agent)
-      if file.status.first != "200"
+      got = open(url, "User-Agent" => @user_agent)
+      if got.status.first != "200"
         raise
       end
-      file
+
+      if got.is_a? Tempfile
+        got
+      elsif got.is_a? StringIO
+        tmp = Tempfile.new("Rsn-tmp")
+        File.binwrite(tmp.path, got.string)
+        tmp
+      else
+        raise
+      end
     end
   end
 end
