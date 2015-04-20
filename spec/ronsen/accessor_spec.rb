@@ -71,38 +71,53 @@ describe Ronsen::Accessor do
 
     describe "#get_bin" do
       let(:url) { "http://mock.example.com/sample.mp3" }
-      let(:small_file_path) { (Pathname.new(__dir__) + "../fixtures/small_file.jpg").to_s }
 
       context "Success" do
         subject { accessor.get_bin(url) }
-        it "sends request with defined UserAgent" do
-          ua = "Mozilla/////////xxxxxy[]"
 
-          accessor.user_agent = ua
+        shared_examples_for "normal" do
 
-          stub = stub_request(:get, url)
-            .with(:headers => { 'User-Agent' => ua })
-            .to_return(status: 200, body: "")
+          it "sends request with defined UserAgent" do
+            ua = "Mozilla/////////xxxxxy[]"
 
-          subject
+            accessor.user_agent = ua
 
-          expect(stub).to have_been_requested
+            stub = stub_request(:get, url)
+              .with(:headers => { 'User-Agent' => ua })
+              .to_return(status: 200, body: file_path)
+
+            subject
+
+            expect(stub).to have_been_requested
+          end
+
+          it "returns Tempfile" do
+            stub_request(:get, url)
+              .to_return(status: 200, body: File.read(file_path))
+            is_expected.to be_a Tempfile
+          end
+
+          it "fetches correct file" do
+            expected_hash = Digest::SHA1.hexdigest(File.read(file_path))
+
+            stub_request(:get, url)
+              .to_return(status: 200, body: File.read(file_path))
+
+            actual_hash = Digest::SHA1.hexdigest(subject.read)
+            expect(actual_hash).to eq expected_hash
+          end
         end
 
-        it "returns Tempfile" do
-          stub_request(:get, url)
-            .to_return(status: 200, body: File.read(small_file_path))
-          is_expected.to be_a Tempfile
+        context "small_file" do
+          let(:file_path) { (Pathname.new(__dir__) + "../fixtures/small_file.jpg").to_s }
+
+          it_should_behave_like "normal"
         end
 
-        it "fetches correct file" do
-          expected_hash = Digest::SHA1.hexdigest(File.read(small_file_path))
+        context "large_file" do
+          let(:file_path) { (Pathname.new(__dir__) + "../fixtures/large_file.mp3").to_s }
 
-          stub_request(:get, url)
-            .to_return(status: 200, body: File.read(small_file_path))
-
-          actual_hash = Digest::SHA1.hexdigest(subject.read)
-          expect(actual_hash).to eq expected_hash
+          it_should_behave_like "normal"
         end
       end
     end
