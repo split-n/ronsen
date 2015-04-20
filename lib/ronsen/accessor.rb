@@ -22,15 +22,15 @@ module Ronsen
       rescue => e
         raise ConnectionError, e
       end
-        if res.status != 200 || res.body.empty?
-          raise ResponseError, res
-        end
+      if res.status != 200 || res.body.empty?
+        raise ResponseError, res
+      end
 
       res.body
     end
 
     def get_bin(url)
-      file = open(url)
+      file = open(url, "User-Agent" => @user_agent)
       if file.status.first != "200"
         raise
       end
