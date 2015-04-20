@@ -2,8 +2,12 @@ module Ronsen
   class Accessor
     include Singleton
     ONSEN_HOST = "http://www.onsen.ag"
+    PROGRAMS_XML_PATH = "/app/programs.xml"
+
+    attr_accessor :user_agent
 
     def initialize
+      @user_agent = 'Dalvik/1.6.0 (Linux; U; Android 4.4.2), like Ronsen gem';
     end
 
     def get_programs_xml
@@ -11,8 +15,9 @@ module Ronsen
         f.request :url_encoded
         f.adapter Faraday.default_adapter
       }
+      conn.headers[:user_agent] = @user_agent
 
-      res = conn.get("/app/programs.xml")
+      res = conn.get(PROGRAMS_XML_PATH)
       if res.status != 200 || res.body.empty?
         raise
       end
