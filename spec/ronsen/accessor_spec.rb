@@ -71,7 +71,7 @@ describe Ronsen::Accessor do
 
     describe "#get_bin" do
       let(:url) { "http://mock.example.com/sample.mp3" }
-      let(:small_file) { (Pathname.new(__dir__) + "../fixtures/small_file.mp3").open }
+      let(:small_file) { (Pathname.new(__dir__) + "../fixtures/small_file.jpg").open }
 
       context "Success" do
         subject { accessor.get_bin(url) }
