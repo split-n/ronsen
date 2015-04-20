@@ -9,6 +9,7 @@ require "ronsen/version"
 require "ronsen/accessor"
 require "ronsen/crawler"
 require "ronsen/program"
+require "ronsen/errors"
 
 ActiveSupport::XmlMini.backend = 'Nokogiri'
 
