@@ -120,6 +120,27 @@ describe Ronsen::Accessor do
           it_should_behave_like "normal"
         end
       end
+
+      context "Error" do
+        let(:url) { "http://mock.example.com/sample.mp3" }
+        subject { ->{ accessor.get_bin(url) } }
+        it "throws ConnectionError when timeout" do
+          stub_request(:get, url).to_timeout
+          expect(subject).to raise_error(Ronsen::ConnectionError) {|e|
+            p e
+          }
+
+        end
+
+        it "throws ResponseError when response code is not 200" do
+          status_code = 403
+          stub_request(:get, url).to_return(status: status_code)
+          expect(subject).to raise_error(Ronsen::ResponseError) {|e|
+            expect(e.response.status).to eq status_code
+          }
+        end
+
+      end
     end
   end
 end

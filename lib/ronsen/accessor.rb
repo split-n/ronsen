@@ -30,9 +30,13 @@ module Ronsen
     end
 
     def get_bin(url)
+
+      begin
       got = open(url, "User-Agent" => @user_agent)
-      if got.status.first != "200"
-        raise
+      rescue Timeout::Error => e
+        raise Ronsen::ConnectionError, e
+      rescue OpenURI::HTTPError => e
+        raise Ronsen::ResponseError, e.message.split.first.to_i
       end
 
       if got.is_a? Tempfile
