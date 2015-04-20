@@ -71,7 +71,7 @@ describe Ronsen::Accessor do
 
     describe "#get_bin" do
       let(:url) { "http://mock.example.com/sample.mp3" }
-      let(:small_file) { (Pathname.new(__dir__) + "../fixtures/small_file.jpg").open }
+      let(:small_file_path) { (Pathname.new(__dir__) + "../fixtures/small_file.jpg").to_s }
 
       context "Success" do
         subject { accessor.get_bin(url) }
@@ -91,16 +91,15 @@ describe Ronsen::Accessor do
 
         it "returns Tempfile" do
           stub_request(:get, url)
-            .to_return(status: 200, body: small_file)
+            .to_return(status: 200, body: File.read(small_file_path))
           is_expected.to be_a Tempfile
         end
 
         it "fetches correct file" do
-          expected_hash = Digest::SHA1.hexdigest(small_file.read)
-          small_file.rewind
+          expected_hash = Digest::SHA1.hexdigest(File.read(small_file_path))
 
           stub_request(:get, url)
-            .to_return(status: 200, body: small_file)
+            .to_return(status: 200, body: File.read(small_file_path))
 
           actual_hash = Digest::SHA1.hexdigest(subject.read)
           expect(actual_hash).to eq expected_hash
