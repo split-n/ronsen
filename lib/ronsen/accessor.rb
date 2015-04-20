@@ -17,10 +17,15 @@ module Ronsen
       }
       conn.headers[:user_agent] = @user_agent
 
-      res = conn.get(PROGRAMS_XML_PATH)
-      if res.status != 200 || res.body.empty?
-        raise
+      begin
+        res = conn.get(PROGRAMS_XML_PATH)
+      rescue => e
+        raise ConnectionError, e
       end
+        if res.status != 200 || res.body.empty?
+          raise ResponseError, res
+        end
+
       res.body
     end
 

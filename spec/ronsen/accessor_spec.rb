@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 describe Ronsen::Accessor do
+  let(:accessor) { Ronsen::Accessor.instance }
   context "with Internet access" do
     before do
       WebMock.allow_net_connect!
     end
 
     it 'can get soreppoi xml' do
-      accessor = Ronsen::Accessor.instance
       response = accessor.get_programs_xml
       expect(response.scan("<title>").count).to be > 10
       expect(response.scan(/\<movie_url\>http.+\/.+\.\w+\<\/movie_url\>/).count).to be > 10
@@ -25,21 +25,48 @@ describe Ronsen::Accessor do
       xml_path.read
     }
 
-    it "sends request with defined UserAgent" do
-      ua = "Mozilla/////////xxxxxy[]"
-      url = Ronsen::Accessor::ONSEN_HOST +
-        Ronsen::Accessor::PROGRAMS_XML_PATH
+    let(:url) {
+      Ronsen::Accessor::ONSEN_HOST + Ronsen::Accessor::PROGRAMS_XML_PATH
+    }
+    context "Success" do
+      it "sends request with defined UserAgent" do
+        ua = "Mozilla/////////xxxxxy[]"
 
-      target = Ronsen::Accessor.instance
-      target.user_agent = ua
+        accessor.user_agent = ua
 
-      stub = stub_request(:get, url)
-        .with(:headers => { 'User-Agent' => ua })
-        .to_return(status: 200, body: xml)
+        stub = stub_request(:get, url)
+          .with(:headers => { 'User-Agent' => ua })
+          .to_return(status: 200, body: xml)
 
-      target.get_programs_xml
+        accessor.get_programs_xml
 
-      expect(stub).to have_been_requested
+        expect(stub).to have_been_requested
+      end
     end
+
+
+    context "Error" do
+      subject { ->{ accessor.get_programs_xml } }
+      it "throws ConnectionError when timeout" do
+        stub = stub_request(:get, url).to_timeout
+        expect(subject).to raise_error(Ronsen::ConnectionError) {|e|
+          expect(e.inner_exception).to be_a Faraday::TimeoutError
+        }
+
+      end
+
+      it "throws ResponseError when response code is not 200" do
+        status_code = 403
+        stub_request(:get, url).to_return(status: status_code)
+        expect(subject).to raise_error(Ronsen::ResponseError) {|e|
+          expect(e.response.status).to eq status_code
+        }
+      end
+
+    end
+  end
+
+  describe "#get_bin" do
+
   end
 end
