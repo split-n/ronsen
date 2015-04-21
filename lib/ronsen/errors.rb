@@ -8,11 +8,19 @@ module Ronsen
     end
   end
 
-  class ResponseError < StandardError
+  class ResponseError < Error
     attr_reader :content
     def initialize(content)
       super(content)
       @content = content
     end
   end
+
+  class ResponseParseError < Error
+    def initialize(msg=nil)
+      super(msg)
+    end
+  end
+
+  class NotActiveProramError < Error; end
 end

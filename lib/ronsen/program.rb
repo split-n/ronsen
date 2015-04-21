@@ -4,13 +4,14 @@ module Ronsen
       def parse_entire_xml(xml_str)
         doc = Nokogiri.parse(xml_str)
         progs = doc.css("program").map{|p| self.new(p)}
-        progs.empty? ? raise : progs
+        raise ResponseParseError if progs.empty?
+        progs
       end
     end
 
     def initialize(prog_xml)
-      raise "type is not Nokogiri::XML::Node" unless prog_xml.is_a? Nokogiri::XML::Node
-      raise "root node is not program" if prog_xml.name != "program"
+      raise ResponseParseError, "type is not Nokogiri::XML::Node" unless prog_xml.is_a? Nokogiri::XML::Node
+      raise ResponseParseError, "root node is not program" if prog_xml.name != "program"
       @xml = prog_xml
     end
 
@@ -55,13 +56,13 @@ module Ronsen
     end
 
     def download
-      raise if !can_download?
+      raise NotActiveProramError if !can_download?
       target = @xml.css("program > movie_url").first.text
       Accessor.instance.get_bin(target)
     end
 
     def pretty_filename
-      raise if !can_download?
+      raise NotActiveProramError if !can_download?
       h = as_hash
       date = Date.parse h["up_date"]
       ext = File.extname h["movie_url"]

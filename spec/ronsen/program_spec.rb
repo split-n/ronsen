@@ -16,7 +16,7 @@ describe Ronsen::Program do
 
       context "no programs in xml" do
         let(:xml) { '<?xml version="1.0" encoding="UTF-8"?>' }
-        it { is_expected.to raise_error }
+        it { is_expected.to raise_error Ronsen::ResponseParseError }
       end
     end
 
@@ -29,12 +29,12 @@ describe Ronsen::Program do
 
       context "arg is nil" do
         let(:xml) { nil }
-        it { is_expected.to raise_error }
+        it { is_expected.to raise_error Ronsen::ResponseParseError }
       end
 
       context "arg is string" do
         let(:xml) { "<?xml>" }
-        it { is_expected.to raise_error }
+        it { is_expected.to raise_error Ronsen::ResponseParseError}
       end
 
       context "arg not contains <program>" do
@@ -46,7 +46,7 @@ describe Ronsen::Program do
           EOF
           Nokogiri.parse(xml_str)
         }
-        it { is_expected.to raise_error }
+        it { is_expected.to raise_error Ronsen::ResponseParseError}
       end
       context "load program1.xml" do
         it { expect(subject.call).to be_a Ronsen::Program }
@@ -134,7 +134,7 @@ describe Ronsen::Program do
 
       describe "#pretty_filename" do
         subject { -> { instance.pretty_filename } }
-        it { expect(subject).to raise_error }
+        it { expect(subject).to raise_error Ronsen::NotActiveProramError }
       end
 
       it_should_behave_like "Instance's methods"

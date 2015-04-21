@@ -36,7 +36,7 @@ module Ronsen
       rescue Timeout::Error => e
         raise Ronsen::ConnectionError, e
       rescue OpenURI::HTTPError => e
-        raise Ronsen::ResponseError, e.message.split.first.to_i
+        raise Ronsen::ResponseError, e.message
       end
 
       if got.is_a? Tempfile
