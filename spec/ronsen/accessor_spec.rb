@@ -62,7 +62,7 @@ describe Ronsen::Accessor do
           status_code = 403
           stub_request(:get, url).to_return(status: status_code)
           expect(subject).to raise_error(Ronsen::ResponseError) {|e|
-            expect(e.response.status).to eq status_code
+            expect(e.content.status).to eq status_code
           }
         end
 
@@ -127,7 +127,7 @@ describe Ronsen::Accessor do
         it "throws ConnectionError when timeout" do
           stub_request(:get, url).to_timeout
           expect(subject).to raise_error(Ronsen::ConnectionError) {|e|
-            p e
+            expect(e.inner_exception).to be_a Timeout::Error
           }
 
         end
@@ -136,7 +136,7 @@ describe Ronsen::Accessor do
           status_code = 403
           stub_request(:get, url).to_return(status: status_code)
           expect(subject).to raise_error(Ronsen::ResponseError) {|e|
-            expect(e.response.status).to eq status_code
+            expect(e.content).to eq status_code
           }
         end
 

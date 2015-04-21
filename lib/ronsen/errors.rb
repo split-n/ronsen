@@ -9,11 +9,10 @@ module Ronsen
   end
 
   class ResponseError < StandardError
-    attr_reader :response
-    def initialize(response)
-      msg = "status code: #{response.status}"
-      super(msg)
-      @response = response
+    attr_reader :content
+    def initialize(content)
+      super(content)
+      @content = content
     end
   end
 end
