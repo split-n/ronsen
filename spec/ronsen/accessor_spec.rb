@@ -136,7 +136,7 @@ describe Ronsen::Accessor do
           status_code = 403
           stub_request(:get, url).to_return(status: status_code)
           expect(subject).to raise_error(Ronsen::ResponseError) {|e|
-            expect(e.content).to eq status_code
+            expect(e.content).to include status_code.to_s
           }
         end
 
