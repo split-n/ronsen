@@ -32,20 +32,6 @@ module Ronsen
       h
     end
 
-    def map_nil_to_empty_string(hash)
-      hash.map{|k,v|
-        [k, (case v
-        when nil
-          ""
-        when Hash
-          map_nil_to_empty_string(v)
-        else
-          v
-        end)
-        ]
-      }.to_h
-    end
-
     def banner_image_url
       (URI.parse("http://www.onsen.ag/") +
        @xml.css("banner_image").first.text).to_s
@@ -70,6 +56,20 @@ module Ronsen
     end
 
     private
+    def map_nil_to_empty_string(hash)
+      hash.map{|k,v|
+        [k, (case v
+        when nil
+          ""
+        when Hash
+          map_nil_to_empty_string(v)
+        else
+          v
+        end)
+        ]
+      }.to_h
+    end
+
     def write_mp3_tag(mp3_file)
 
     end
