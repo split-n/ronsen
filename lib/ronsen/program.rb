@@ -43,7 +43,7 @@ module Ronsen
 
     def download
       raise NotActiveProramError if !can_download?
-      target = @xml.css("program > movie_url").first.text
+      target = @xml.css("movie_url").first.text
       Accessor.instance.get_bin(target)
     end
 
