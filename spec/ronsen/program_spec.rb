@@ -103,6 +103,19 @@ describe Ronsen::Program do
         subject { instance.pretty_filename }
         it { is_expected.to eq expected_pretty_filename }
       end
+
+      describe "#download" do
+        subject {
+          stub = stub_request(:get, expected_download_url)
+            .to_return(status: 200, body: "")
+          instance.download
+          stub
+        }
+
+        it "requests correct url" do
+          is_expected.to have_been_requested
+        end
+      end
     end
 
     context "initialized by program1.xml" do
@@ -116,6 +129,7 @@ describe Ronsen::Program do
       let(:expected_banner_image_url) { "http://www.onsen.ag/program/shirobako/image/176_pgi01_s.jpg" }
       let(:expected_pretty_filename) { "SHIROBAKOラジオBOX 第26回 4月6日放送.mp3" }
       let(:expected_can_download) { true }
+      let(:expected_download_url) { "http://onsen.b-ch.com/radio/shirobako150406mE3h.mp3" }
 
       it_should_behave_like "Instance's methods"
       it_should_behave_like "Normal Instance's methods"
@@ -134,6 +148,11 @@ describe Ronsen::Program do
 
       describe "#pretty_filename" do
         subject { -> { instance.pretty_filename } }
+        it { expect(subject).to raise_error Ronsen::NotActiveProramError }
+      end
+
+      describe "#download" do
+        subject { -> { instance.download } }
         it { expect(subject).to raise_error Ronsen::NotActiveProramError }
       end
 
