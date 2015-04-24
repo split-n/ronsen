@@ -7,10 +7,10 @@ require 'mp3info'
 require "digest/sha1"
 
 require "ronsen/version"
-require "ronsen/accessor"
-require "ronsen/client"
-require "ronsen/program"
 require "ronsen/errors"
+require "ronsen/accessor"
+require "ronsen/program"
+require "ronsen/client"
 
 ActiveSupport::XmlMini.backend = 'Nokogiri'
 
