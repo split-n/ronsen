@@ -1,17 +1,19 @@
 module Ronsen
   class Program
     class << self
-      def parse_entire_xml(xml_str)
+      def parse_entire_xml(xml_str,accessor)
         doc = Nokogiri.parse(xml_str)
-        progs = doc.css("program").map{|p| self.new(p)}
-        progs.empty? ? raise : progs
+        progs = doc.css("program").map{|p| self.new(p,accessor)}
+        raise ResponseParseError if progs.empty?
+        progs
       end
     end
 
-    def initialize(prog_xml)
-      raise "type is not Nokogiri::XML::Node" unless prog_xml.is_a? Nokogiri::XML::Node
-      raise "root node is not program" if prog_xml.name != "program"
+    def initialize(prog_xml,accessor)
+      raise ResponseParseError, "type is not Nokogiri::XML::Node" unless prog_xml.is_a? Nokogiri::XML::Node
+      raise ResponseParseError, "root node is not program" if prog_xml.name != "program"
       @xml = prog_xml
+      @accessor = accessor
     end
 
     def id
@@ -31,6 +33,31 @@ module Ronsen
       h
     end
 
+    def banner_image_url
+      (URI.parse("http://www.onsen.ag/") +
+       @xml.css("banner_image").first.text).to_s
+    end
+
+    def can_download?
+      !@xml.css("movie_url").first.text.empty?
+    end
+
+    def download
+      raise NotActiveProramError if !can_download?
+      target = @xml.css("movie_url").first.text
+      @accessor.get_bin(target)
+    end
+
+    def pretty_filename
+      raise NotActiveProramError if !can_download?
+      h = as_hash
+      date = Date.parse h["up_date"]
+      ext = File.extname h["movie_url"]
+      "#{h["title"]} 第#{h["program_number"].rjust(2,"0")}回 #{date.month}月#{date.day}日放送#{ext}"
+    end
+
+
+    private
     def map_nil_to_empty_string(hash)
       hash.map{|k,v|
         [k, (case v
@@ -45,30 +72,6 @@ module Ronsen
       }.to_h
     end
 
-    def banner_image_url
-      (URI.parse("http://www.onsen.ag/") +
-       @xml.css("banner_image").first.text).to_s
-    end
-
-    def can_download?
-      !@xml.css("movie_url").first.text.empty?
-    end
-
-    def download
-      raise if !can_download?
-      target = @xml.css("program > movie_url").first.text
-      Accessor.instance.get_bin(target)
-    end
-
-    def pretty_filename
-      raise if !can_download?
-      h = as_hash
-      date = Date.parse h["up_date"]
-      ext = File.extname h["movie_url"]
-      "#{h["title"]} 第#{h["program_number"].rjust(2,"0")}回 #{date.month}月#{date.day}日放送#{ext}"
-    end
-
-    private
     def write_mp3_tag(mp3_file)
 
     end

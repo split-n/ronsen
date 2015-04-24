@@ -1,9 +1,10 @@
 require 'spec_helper'
 
 describe Ronsen::Program do
+  let(:accessor) { double("accessor mock") }
   describe "Class" do
     describe ".parse_entire_xml" do
-      subject { -> { Ronsen::Program.parse_entire_xml(xml) } }
+      subject { -> { Ronsen::Program.parse_entire_xml(xml, accessor) } }
 
       context "load programs.xml" do
         let(:xml) {
@@ -16,7 +17,7 @@ describe Ronsen::Program do
 
       context "no programs in xml" do
         let(:xml) { '<?xml version="1.0" encoding="UTF-8"?>' }
-        it { is_expected.to raise_error }
+        it { is_expected.to raise_error Ronsen::ResponseParseError }
       end
     end
 
@@ -25,16 +26,16 @@ describe Ronsen::Program do
         xml_path = Pathname.new(__dir__) + "../fixtures/program1.xml"
         Nokogiri.parse(xml_path.read).xpath("//program").first
       }
-      subject { -> { Ronsen::Program.new(xml) } }
+      subject { -> { Ronsen::Program.new(xml, accessor) } }
 
       context "arg is nil" do
         let(:xml) { nil }
-        it { is_expected.to raise_error }
+        it { is_expected.to raise_error Ronsen::ResponseParseError }
       end
 
       context "arg is string" do
         let(:xml) { "<?xml>" }
-        it { is_expected.to raise_error }
+        it { is_expected.to raise_error Ronsen::ResponseParseError}
       end
 
       context "arg not contains <program>" do
@@ -46,7 +47,7 @@ describe Ronsen::Program do
           EOF
           Nokogiri.parse(xml_str)
         }
-        it { is_expected.to raise_error }
+        it { is_expected.to raise_error Ronsen::ResponseParseError}
       end
       context "load program1.xml" do
         it { expect(subject.call).to be_a Ronsen::Program }
@@ -56,7 +57,7 @@ describe Ronsen::Program do
 
 
   describe "Instance" do
-    let(:instance) { Ronsen::Program.new(xml) }
+    let(:instance) { Ronsen::Program.new(xml, accessor) }
 
     shared_examples_for "Instance's methods" do
 
@@ -103,6 +104,31 @@ describe Ronsen::Program do
         subject { instance.pretty_filename }
         it { is_expected.to eq expected_pretty_filename }
       end
+
+      describe "#download" do
+        context "success" do
+          before do
+            allow(accessor).to receive(:get_bin).and_return(Tempfile.new("testing"))
+          end
+
+          it "requests correct url" do
+            expect(accessor).to receive(:get_bin).with(expected_download_url)
+            expect{ instance.download }.not_to raise_error
+          end
+        end
+
+        context "fail" do
+          before do
+            allow(accessor).to receive(:get_bin).and_raise(Ronsen::ConnectionError)
+          end
+
+          it "pass error" do
+            expect(accessor).to receive(:get_bin).with(expected_download_url)
+            expect{ instance.download }.to raise_error Ronsen::ConnectionError
+          end
+
+        end
+      end
     end
 
     context "initialized by program1.xml" do
@@ -116,6 +142,7 @@ describe Ronsen::Program do
       let(:expected_banner_image_url) { "http://www.onsen.ag/program/shirobako/image/176_pgi01_s.jpg" }
       let(:expected_pretty_filename) { "SHIROBAKOラジオBOX 第26回 4月6日放送.mp3" }
       let(:expected_can_download) { true }
+      let(:expected_download_url) { "http://onsen.b-ch.com/radio/shirobako150406mE3h.mp3" }
 
       it_should_behave_like "Instance's methods"
       it_should_behave_like "Normal Instance's methods"
@@ -134,7 +161,12 @@ describe Ronsen::Program do
 
       describe "#pretty_filename" do
         subject { -> { instance.pretty_filename } }
-        it { expect(subject).to raise_error }
+        it { expect(subject).to raise_error Ronsen::NotActiveProramError }
+      end
+
+      describe "#download" do
+        subject { -> { instance.download } }
+        it { expect(subject).to raise_error Ronsen::NotActiveProramError }
       end
 
       it_should_behave_like "Instance's methods"
