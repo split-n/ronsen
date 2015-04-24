@@ -106,14 +106,29 @@ describe Ronsen::Program do
 
       describe "#download" do
         let(:acc_mock) { double("Accessor Mock") }
-        before do
-          allow(acc_mock).to receive(:get_bin).and_return(Tempfile.new("testing"))
-          allow(instance).to receive(:accessor).and_return(acc_mock)
+        context "success" do
+          before do
+            allow(acc_mock).to receive(:get_bin).and_return(Tempfile.new("testing"))
+            allow(instance).to receive(:accessor).and_return(acc_mock)
+          end
+
+          it "requests correct url" do
+            expect(acc_mock).to receive(:get_bin).with(expected_download_url)
+            expect{ instance.download }.not_to raise_error
+          end
         end
 
-        it "requests correct url" do
-          expect(acc_mock).to receive(:get_bin).with(expected_download_url)
-          expect{ instance.download }.not_to raise_error
+        context "fail" do
+          before do
+            allow(acc_mock).to receive(:get_bin).and_raise(Ronsen::ConnectionError)
+            allow(instance).to receive(:accessor).and_return(acc_mock)
+          end
+
+          it "pass error" do
+            expect(acc_mock).to receive(:get_bin).with(expected_download_url)
+            expect{ instance.download }.to raise_error Ronsen::ConnectionError
+          end
+
         end
       end
     end
