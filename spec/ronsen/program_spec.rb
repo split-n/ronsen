@@ -105,15 +105,15 @@ describe Ronsen::Program do
       end
 
       describe "#download" do
-        subject {
-          stub = stub_request(:get, expected_download_url)
-            .to_return(status: 200, body: "")
-          instance.download
-          stub
-        }
+        let(:acc_mock) { double("Accessor Mock") }
+        before do
+          allow(acc_mock).to receive(:get_bin).and_return(Tempfile.new("testing"))
+          allow(instance).to receive(:accessor).and_return(acc_mock)
+        end
 
         it "requests correct url" do
-          is_expected.to have_been_requested
+          expect(acc_mock).to receive(:get_bin).with(expected_download_url)
+          expect{ instance.download }.not_to raise_error
         end
       end
     end
