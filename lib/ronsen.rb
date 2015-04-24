@@ -8,7 +8,7 @@ require "digest/sha1"
 
 require "ronsen/version"
 require "ronsen/accessor"
-require "ronsen/crawler"
+require "ronsen/client"
 require "ronsen/program"
 require "ronsen/errors"
 
