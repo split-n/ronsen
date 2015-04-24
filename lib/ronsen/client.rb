@@ -5,7 +5,7 @@ module Ronsen
     end
 
     def get_programs
-      Proram.parse_entire_xml(@accessor.get_programs_xml)
+      Program.parse_entire_xml(@accessor.get_programs_xml,@accessor)
     end
 
     def user_agent=(str)
