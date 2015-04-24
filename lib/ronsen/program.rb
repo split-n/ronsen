@@ -44,7 +44,7 @@ module Ronsen
     def download
       raise NotActiveProramError if !can_download?
       target = @xml.css("movie_url").first.text
-      Accessor.instance.get_bin(target)
+      accessor.get_bin(target)
     end
 
     def pretty_filename
@@ -72,6 +72,10 @@ module Ronsen
 
     def write_mp3_tag(mp3_file)
 
+    end
+
+    def accessor
+      Accessor.instance
     end
   end
 end
