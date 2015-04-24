@@ -1,9 +1,10 @@
 require 'spec_helper'
 
 describe Ronsen::Program do
+  let(:accessor) { double("accessor mock") }
   describe "Class" do
     describe ".parse_entire_xml" do
-      subject { -> { Ronsen::Program.parse_entire_xml(xml) } }
+      subject { -> { Ronsen::Program.parse_entire_xml(xml, accessor) } }
 
       context "load programs.xml" do
         let(:xml) {
@@ -25,7 +26,7 @@ describe Ronsen::Program do
         xml_path = Pathname.new(__dir__) + "../fixtures/program1.xml"
         Nokogiri.parse(xml_path.read).xpath("//program").first
       }
-      subject { -> { Ronsen::Program.new(xml) } }
+      subject { -> { Ronsen::Program.new(xml, accessor) } }
 
       context "arg is nil" do
         let(:xml) { nil }
@@ -56,7 +57,7 @@ describe Ronsen::Program do
 
 
   describe "Instance" do
-    let(:instance) { Ronsen::Program.new(xml) }
+    let(:instance) { Ronsen::Program.new(xml, accessor) }
 
     shared_examples_for "Instance's methods" do
 
@@ -105,27 +106,24 @@ describe Ronsen::Program do
       end
 
       describe "#download" do
-        let(:acc_mock) { double("Accessor Mock") }
         context "success" do
           before do
-            allow(acc_mock).to receive(:get_bin).and_return(Tempfile.new("testing"))
-            allow(instance).to receive(:accessor).and_return(acc_mock)
+            allow(accessor).to receive(:get_bin).and_return(Tempfile.new("testing"))
           end
 
           it "requests correct url" do
-            expect(acc_mock).to receive(:get_bin).with(expected_download_url)
+            expect(accessor).to receive(:get_bin).with(expected_download_url)
             expect{ instance.download }.not_to raise_error
           end
         end
 
         context "fail" do
           before do
-            allow(acc_mock).to receive(:get_bin).and_raise(Ronsen::ConnectionError)
-            allow(instance).to receive(:accessor).and_return(acc_mock)
+            allow(accessor).to receive(:get_bin).and_raise(Ronsen::ConnectionError)
           end
 
           it "pass error" do
-            expect(acc_mock).to receive(:get_bin).with(expected_download_url)
+            expect(accessor).to receive(:get_bin).with(expected_download_url)
             expect{ instance.download }.to raise_error Ronsen::ConnectionError
           end
 

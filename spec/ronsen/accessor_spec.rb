@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Ronsen::Accessor do
-  let(:accessor) { Ronsen::Accessor.instance }
+  let(:accessor) { Ronsen::Accessor.new }
   context "with Internet access" do
     before do
       WebMock.allow_net_connect!

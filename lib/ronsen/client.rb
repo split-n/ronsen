@@ -4,10 +4,13 @@ module Ronsen
       Proram.parse_entire_xml(accessor.get_programs_xml)
     end
 
+    def user_agent=(str)
+      @accessor.user_agent = str
+    end
 
     private
     def accessor
-      Accessor.instance
+      @accessor ||= Accessor.new
     end
   end
 end

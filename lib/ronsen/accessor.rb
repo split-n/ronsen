@@ -1,6 +1,5 @@
 module Ronsen
   class Accessor
-    include Singleton
     ONSEN_HOST = "http://www.onsen.ag"
     PROGRAMS_XML_PATH = "/app/programs.xml"
 
