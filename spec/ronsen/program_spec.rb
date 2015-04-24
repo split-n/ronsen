@@ -129,6 +129,10 @@ describe Ronsen::Program do
 
         end
       end
+
+      describe "#write_mp3_tag" do
+
+      end
     end
 
     context "initialized by program1.xml" do

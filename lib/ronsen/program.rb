@@ -72,8 +72,30 @@ module Ronsen
       }.to_h
     end
 
-    def write_mp3_tag(mp3_file)
+    def write_mp3_tag(mp3_file_path)
+      h = as_hash
+      banner_file = download_banner
+      Mp3Info.open(mp3_file_path) do |mp3|
+        mp3.tag2.remove_pictures
+        mp3.removetag1
+        mp3.removetag2
+        mp3.tag2["TIT2"] = "#{h["title"]} 第#{h["program_number"]}回"
+        mp3.tag2["TPE1"] = h["actor_tag"]
+        mp3.tag2["TALB"] = h["title"]
+        mp3.tag2["TYER"] = Date.parse(h["up_date"]).year
+        mp3.tag2["TRCK"] = h["program_number"]
+        mp3.tag2["TCON"] = "Radio"
+        mp3.tag2["TRSN"] = "Onsen"
+        mp3.tag2.add_picture(banner_file.read)
+      end
+      banner_file.close
+    end
 
+    def download_banner
+      raise NotActiveProramError if !can_download?
+      path = @xml.css("banner_image").first.text
+      base = URI.parse(Accessor::ONSEN_HOST)
+      @accessor.get_bin(base + path)
     end
   end
 end
