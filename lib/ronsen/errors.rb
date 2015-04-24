@@ -2,8 +2,12 @@ module Ronsen
   class Error < RuntimeError; end
   class ConnectionError < Error
     attr_reader :inner_exception
-    def initialize(ex)
-      super(ex.message)
+    def initialize(ex=nil)
+      if ex
+        super(ex.message)
+      else
+        super()
+      end
       @inner_exception = ex
     end
   end
