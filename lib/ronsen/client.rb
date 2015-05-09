@@ -1,7 +1,7 @@
 module Ronsen
   class Client
-    def initialize
-      @accessor = Accessor.new
+    def initialize(accessor=nil)
+      @accessor = accessor || Accessor.new
     end
 
     def get_active_programs
